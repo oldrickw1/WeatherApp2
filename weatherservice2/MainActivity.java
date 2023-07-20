@@ -7,40 +7,62 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity {
-    private Button getCityLocationBtn, useCityLocationBtn, useCityNameBtn;
+    private Button getCityCoordinates, getWeatherFromCoordinates, getWeatherFromCityName;
     private EditText cityInputET, latitudeET, longitudeET;
     private RecyclerView weatherResultRV;
-    private float latitude;
-    private float longitude;
-    private float uv_index_max;
+    private double latitude;
+    private double longitude;
+    private WeatherDataService weatherService;
 
-    private RequestQueue requestQueue;
-
-
-    private WeatherService weatherService = new WeatherService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Util.log("TEST");
-        requestQueue = RequestQueueSingleton.getInstance(this).getRequestQueue();
         setUp();
 
-        getCityLocationBtn.setOnClickListener(v -> {
-            float maxUV = weatherService.getMaxUV("Placeholder", requestQueue);
-            Util.log("UV: " + maxUV);
+        weatherService = new WeatherDataService();
+//        HashMap<String, Double> coordinates = weatherService.getCityCoordinates("London");
+//        coordinates.entrySet().forEach(e-> {
+//            Util.log(e.toString());
+//        });
+
+
+
+        getCityCoordinates.setOnClickListener(v -> {
+            String cityName = cityInputET.getText().toString().trim();
+            weatherService.getCityCoordinates(cityName, this);
         });
+
+        getWeatherFromCoordinates.setOnClickListener(v -> {
+            Util.toast(this, "Clicked useCityLocationBtn");
+        });
+
+        getWeatherFromCityName.setOnClickListener(v -> {
+            Util.toast(this, "Clicked useCityNameBtn");
+        });
+
 
     }
 
     private void setUp() {
-        getCityLocationBtn = findViewById(R.id.get_city_geolocation_btn);
-        useCityLocationBtn = findViewById(R.id.use_location_btn);
-        useCityNameBtn = findViewById(R.id.use_city_name_btn);
+        getCityCoordinates = findViewById(R.id.get_city_geolocation_btn);
+        getWeatherFromCoordinates = findViewById(R.id.use_location_btn);
+        getWeatherFromCityName = findViewById(R.id.use_city_name_btn);
         cityInputET = findViewById(R.id.city_input_et);
         latitudeET = findViewById(R.id.latitude_et);
         longitudeET = findViewById(R.id.longitude_et);
@@ -48,5 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
         longitude = 0;
         latitude = 0;
+
     }
 }
