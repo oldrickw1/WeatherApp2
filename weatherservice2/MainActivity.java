@@ -9,7 +9,7 @@ import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
     private Button getCityCoordinates, getWeatherFromCoordinates, getWeatherFromCityName;
-    private EditText cityInputET, latitudeET, longitudeET;
+    private EditText cityInputET, latitudeET, longitudeET, weatherResultET;
     private RecyclerView weatherResultRV;
     private double latitude;
     private double longitude;
@@ -24,11 +24,6 @@ public class MainActivity extends AppCompatActivity {
         setUp();
 
         weatherService = new WeatherDataService(this);
-//        HashMap<String, Double> coordinates = weatherService.getCityCoordinates("London");
-//        coordinates.entrySet().forEach(e-> {
-//            Util.log(e.toString());
-//        });
-
 
 
         getCityCoordinates.setOnClickListener(v -> {
@@ -36,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
             weatherService.getCityCoordinate(cityName, new VolleyResponseListener() {
                 @Override
                 public void onError(String s) {
-                    Util.log(s);
+                    Util.toast(MainActivity.this, s);
                 }
 
                 @Override
@@ -44,6 +39,19 @@ public class MainActivity extends AppCompatActivity {
                     Coordinate coordinate = (Coordinate) o;
                     latitudeET.setText(String.valueOf(coordinate.getLatitude()));
                     longitudeET.setText(String.valueOf(coordinate.getLongitude()));
+                    weatherService.getCityWeather(coordinate, new VolleyResponseListener() {
+                        @Override
+                        public void onError(String s) {
+                            Util.toast(MainActivity.this, s);
+                        }
+
+                        @Override
+                        public void onResponse(Object o) {
+                            String weather = String.valueOf((WeatherModel) o);
+                            weatherResultET.setText(weather);
+
+                        }
+                    });
                 }
             });
         });
@@ -68,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         cityInputET = findViewById(R.id.city_input_et);
         latitudeET = findViewById(R.id.latitude_et);
         longitudeET = findViewById(R.id.longitude_et);
+        weatherResultET = findViewById(R.id.result);
         weatherResultRV = findViewById(R.id.weatherRV);
 
         longitude = 0;
