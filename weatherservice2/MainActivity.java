@@ -7,18 +7,6 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-
 public class MainActivity extends AppCompatActivity {
     private Button getCityCoordinates, getWeatherFromCoordinates, getWeatherFromCityName;
     private EditText cityInputET, latitudeET, longitudeET;
@@ -35,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         Util.log("TEST");
         setUp();
 
-        weatherService = new WeatherDataService();
+        weatherService = new WeatherDataService(this);
 //        HashMap<String, Double> coordinates = weatherService.getCityCoordinates("London");
 //        coordinates.entrySet().forEach(e-> {
 //            Util.log(e.toString());
@@ -45,7 +33,19 @@ public class MainActivity extends AppCompatActivity {
 
         getCityCoordinates.setOnClickListener(v -> {
             String cityName = cityInputET.getText().toString().trim();
-            weatherService.getCityCoordinates(cityName, this);
+            weatherService.getCityCoordinate(cityName, new VolleyResponseListener() {
+                @Override
+                public void onError(String s) {
+                    Util.log(s);
+                }
+
+                @Override
+                public void onResponse(Object o) {
+                    Coordinate coordinate = (Coordinate) o;
+                    latitudeET.setText(String.valueOf(coordinate.getLatitude()));
+                    longitudeET.setText(String.valueOf(coordinate.getLongitude()));
+                }
+            });
         });
 
         getWeatherFromCoordinates.setOnClickListener(v -> {
@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
 
     private void setUp() {
         getCityCoordinates = findViewById(R.id.get_city_geolocation_btn);
