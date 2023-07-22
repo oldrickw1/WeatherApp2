@@ -20,57 +20,59 @@ public class WeatherDataService {
     private static final String BASE_URL = "https://api.open-meteo.com/v1/forecast";
 
     private Context context;
-    Coordinate coordinate;
 
 
     public WeatherDataService(Context context) {
         this.context = context;
     }
 
-    public void getCityCoordinate(String cityName, VolleyResponseListener volleyResponseListener) {
+    public CompletableFuture<Coordinate> getCityCoordinateAsync(String cityName) {
         String url = QUERY_FOR_CITY_COORDINATES + cityName;
-
+        CompletableFuture<Coordinate> completableFuture = new CompletableFuture<>();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.GET, url,null,
+                Request.Method.GET, url, null,
                 response -> {
                     try {
-                        JSONObject jso = response.getJSONObject(0);
-                        volleyResponseListener.onResponse(new Coordinate(jso.getDouble("longitude"),jso.getDouble("latitude")));
+                        var jso = response.getJSONObject(0);
+                        completableFuture.complete(new Coordinate(jso.getDouble("longitude"), jso.getDouble("latitude")));
                     } catch (JSONException e) {
-                        volleyResponseListener.onError(e.toString());
+                        completableFuture.completeExceptionally(e);
                     }
                 },
-                error -> volleyResponseListener.onError("Something wrong")
+                error -> completableFuture.completeExceptionally(new Exception("Something wrong"))
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String>  headers = new HashMap<>();
+                Map<String, String> headers = new HashMap<>();
                 headers.put("X-Api-Key", Constants.apiKey);
                 return headers;
             }
         };
 
         MySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
+
+        return completableFuture;
     }
 
-    public void getCityWeather(Coordinate coordinate, VolleyResponseListener responseListener) {
+
+    public CompletableFuture<WeatherModel> getCityWeather(Coordinate coordinate) {
 
         String url = getCityWeatherURL(coordinate.getLatitude(), coordinate.getLongitude());
-        Util.log(url);
+        CompletableFuture<WeatherModel> completableFuture = new CompletableFuture<>();
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET, url, null,
                 response -> {
                     try {
                         WeatherModel weather = extractDataFromJsonObjectToWeatherModel(response);
-                        responseListener.onResponse(weather);
+                        completableFuture.complete(weather);
                     } catch (Exception e) {
-                        responseListener.onError(String.valueOf(e));
+                        completableFuture.completeExceptionally(e);
                     }
                 },
-                error -> responseListener.onError(error.toString())
-        );
+                error -> completableFuture.completeExceptionally(new Exception("Something wrong"))        );
         MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
+        return completableFuture;
     }
 
     private WeatherModel extractDataFromJsonObjectToWeatherModel(JSONObject response) {

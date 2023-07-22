@@ -3,9 +3,12 @@ package com.example.weatherservice2;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+
+import java.util.concurrent.CompletableFuture;
 
 public class MainActivity extends AppCompatActivity {
     private Button getCityCoordinates, getWeatherFromCoordinates, getWeatherFromCityName;
@@ -22,46 +25,31 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Util.log("TEST");
         setUp();
-
         weatherService = new WeatherDataService(this);
-
 
         getCityCoordinates.setOnClickListener(v -> {
             String cityName = cityInputET.getText().toString().trim();
-            weatherService.getCityCoordinate(cityName, new VolleyResponseListener() {
-                @Override
-                public void onError(String s) {
-                    Util.toast(MainActivity.this, s);
-                }
-
-                @Override
-                public void onResponse(Object o) {
-                    Coordinate coordinate = (Coordinate) o;
-                    latitudeET.setText(String.valueOf(coordinate.getLatitude()));
-                    longitudeET.setText(String.valueOf(coordinate.getLongitude()));
-                    weatherService.getCityWeather(coordinate, new VolleyResponseListener() {
-                        @Override
-                        public void onError(String s) {
-                            Util.toast(MainActivity.this, s);
-                        }
-
-                        @Override
-                        public void onResponse(Object o) {
-                            String weather = String.valueOf((WeatherModel) o);
-                            weatherResultET.setText(weather);
-
-                        }
-                    });
-                }
+            weatherService.getCityCoordinateAsync(cityName).thenAccept(coordinate -> {
+                latitudeET.setText(Double.toString(coordinate.getLatitude()));
+                longitudeET.setText(Double.toString(coordinate.getLongitude()));
             });
         });
 
         getWeatherFromCoordinates.setOnClickListener(v -> {
-            Util.toast(this, "Clicked useCityLocationBtn");
+            try {
+                float latitude = Float.parseFloat(latitudeET.getText().toString());
+                float longitude = Float.parseFloat(longitudeET.getText().toString());
+                weatherService.getCityWeather(new Coordinate(longitude, latitude)).thenAccept(weatherModel -> weatherResultET.setText(weatherModel.toString()));
+
+            } catch (Exception ignored) {
+                Util.toast(this, "Must specify coordinates");
+            }
+
         });
 
         getWeatherFromCityName.setOnClickListener(v -> {
-            Util.toast(this, "Clicked useCityNameBtn");
+            String cityName = cityInputET.getText().toString().trim();
+            weatherService.getCityCoordinateAsync(cityName).thenCompose(coordinate -> weatherService.getCityWeather(coordinate)).thenAccept(weatherModel -> weatherResultET.setText(weatherModel.toString()));
         });
 
 
