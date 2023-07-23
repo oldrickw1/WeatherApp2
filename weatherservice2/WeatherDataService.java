@@ -20,8 +20,7 @@ public class WeatherDataService {
     private static final String BASE_URL = "https://api.open-meteo.com/v1/forecast";
 
     private Context context;
-
-
+    
     public WeatherDataService(Context context) {
         this.context = context;
     }
