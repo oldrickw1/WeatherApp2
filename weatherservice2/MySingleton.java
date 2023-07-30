@@ -1,4 +1,4 @@
-package com.example.utils;
+package com.example.weatherservice2;
 
 import android.content.Context;
 
@@ -33,4 +33,6 @@ public class MySingleton {
     public <T> void addToRequestQueue(Request<T> req) {
         getRequestQueue().add(req);
     }
+
+
 }

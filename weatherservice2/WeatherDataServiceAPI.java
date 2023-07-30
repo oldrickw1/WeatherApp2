@@ -6,7 +6,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.utils.Constants;
-import com.example.utils.MySingleton;
+import com.example.utils.Util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,13 +16,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class WeatherDataService {
+public class WeatherDataServiceAPI {
     private static final String QUERY_FOR_CITY_COORDINATES = "https://api.api-ninjas.com/v1/city?name=";
     private static final String BASE_URL = "https://api.open-meteo.com/v1/forecast";
 
     private Context context;
 
-    public WeatherDataService(Context context) {
+    public WeatherDataServiceAPI(Context context) {
         this.context = context;
     }
 
@@ -35,6 +35,7 @@ public class WeatherDataService {
                     try {
                         var jso = response.getJSONObject(0);
                         completableFuture.complete(new Coordinate(jso.getDouble("longitude"), jso.getDouble("latitude")));
+                        Util.log("Coordinates received");
                     } catch (JSONException e) {
                         completableFuture.completeExceptionally(e);
                     }
@@ -66,11 +67,17 @@ public class WeatherDataService {
                     try {
                         WeatherModel weather = extractDataFromJsonObjectToWeatherModel(response);
                         completableFuture.complete(weather);
+                        Util.log("Weather received");
+
                     } catch (Exception e) {
                         completableFuture.completeExceptionally(e);
+                        Util.log("Weather not received, error");
                     }
                 },
-                error -> completableFuture.completeExceptionally(new Exception("Something wrong"))        );
+                error -> {
+                    completableFuture.completeExceptionally(new Exception("Something wrong"));
+                    Util.log("Weather not received, error");
+                });
         MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
         return completableFuture;
     }

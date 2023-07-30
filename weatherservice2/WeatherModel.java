@@ -1,7 +1,5 @@
 package com.example.weatherservice2;
 
-import androidx.annotation.NonNull;
-
 public class WeatherModel {
     private float tempMax;
     private float tempMin;
