@@ -1,4 +1,4 @@
-package com.example.weatherservice2;
+package com.example.utils;
 
 import android.content.Context;
 import android.util.Log;

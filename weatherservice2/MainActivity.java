@@ -3,12 +3,11 @@ package com.example.weatherservice2;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.util.concurrent.CompletableFuture;
+import com.example.utils.Util;
 
 public class MainActivity extends AppCompatActivity {
     private Button getCityCoordinates, getWeatherFromCoordinates, getWeatherFromCityName;

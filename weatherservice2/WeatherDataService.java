@@ -5,6 +5,8 @@ import android.content.Context;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.utils.Constants;
+import com.example.utils.MySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,14 +15,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Logger;
 
 public class WeatherDataService {
     private static final String QUERY_FOR_CITY_COORDINATES = "https://api.api-ninjas.com/v1/city?name=";
     private static final String BASE_URL = "https://api.open-meteo.com/v1/forecast";
 
     private Context context;
-    
+
     public WeatherDataService(Context context) {
         this.context = context;
     }
