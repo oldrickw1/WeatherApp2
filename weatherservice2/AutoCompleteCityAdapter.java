@@ -32,7 +32,7 @@ public class AutoCompleteCityAdapter extends ArrayAdapter<CityData> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.country_autocomplete_row, parent, false
+                    R.layout.city_autocomplete_row, parent, false
             );
         }
 

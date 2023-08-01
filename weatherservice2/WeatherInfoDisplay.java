@@ -1,39 +1,64 @@
 package com.example.weatherservice2;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.utils.Util;
+import java.util.ArrayList;
 
 public class WeatherInfoDisplay extends AppCompatActivity {
+    TextView cityNameDisplayTV;
+    TextView cityWeatherDisplayTV;
+    TextView dataTV;
+    RecyclerView recyclerView;
+
+    WeatherDataServiceAPI weatherAPI = new WeatherDataServiceAPI(this);
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_info_display);
 
-        TextView cityNameDisplayTV = findViewById(R.id.cityNameDisplay);
-        TextView cityWeatherDisplayTV = findViewById(R.id.cityWeather);
 
-        String cityName = getIntent().getStringExtra("CityName");
-        String countryName = getIntent().getStringExtra("CityCountry");
+        cityNameDisplayTV = findViewById(R.id.cityNameTV);
+        cityWeatherDisplayTV = findViewById(R.id.countryNameTV);
+        dataTV = findViewById(R.id.dateTV);
+        recyclerView = findViewById(R.id.recyclerView);
 
-        cityNameDisplayTV.setText(cityName + ", " + countryName);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
 
-        WeatherDataServiceAPI weatherAPI = new WeatherDataServiceAPI(this);
-        weatherAPI.getCityCoordinateAsync(cityName)
-                .thenCompose(coordinate -> weatherAPI.getCityWeather(coordinate))
-                .thenAccept(weather -> {
-                    runOnUiThread(() -> {
-                        cityWeatherDisplayTV.setText(weather.toString());
-                        Util.log("Weather: " + weather);
-                    });
-                })
-                .exceptionally(ex -> {
-                    Util.log("Error fetching weather: " + ex.getMessage());
-                    return null;
-                });
+
+
+
+        getWeather(getCityData());
+
     }
+
+    @NonNull
+    private CityData getCityData() {
+        String cityName = getIntent().getExtras().getString("cityName");
+        String country = getIntent().getExtras().getString("country");
+        double latitude = getIntent().getExtras().getDouble("latitude",10);
+        double longitude = getIntent().getExtras().getDouble("longitude",10);
+        return new CityData(cityName,country,latitude,longitude);
+    }
+
+    private void getWeather(CityData city) {
+        weatherAPI.getCityWeatherForWeek(city).thenAccept(results -> {
+            RecyclerViewAdapter adapter = new RecyclerViewAdapter(results);
+            recyclerView.setAdapter(adapter);
+        });
+    }
+
+
+
 }
