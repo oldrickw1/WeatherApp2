@@ -20,6 +20,7 @@ import java.util.Locale;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
     private ArrayList<WeatherModel> weatherModels;
 
+
     public RecyclerViewAdapter(ArrayList<WeatherModel> weatherModels) {
         this.weatherModels = weatherModels;
     }
@@ -32,6 +33,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView rainTV;
         ImageView weatherImageIV;
         TextView dateTV;
+        TextView descriptionTV;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -41,6 +43,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             rainTV = itemView.findViewById(R.id.rainTV);
             weatherImageIV = itemView.findViewById(R.id.imageView);
             dateTV = itemView.findViewById(R.id.dateTV);
+            descriptionTV = itemView.findViewById(R.id.weatherDescriptionTV);
         }
     }
 
@@ -56,20 +59,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     // Bind data to the views in each item
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Context context = holder.itemView.getContext();
         WeatherModel model =  weatherModels.get(position);
+        WeatherCodeDetails details = WeatherMapping.getWeatherCodeDetails(context, model.getWeatherCode());
 
         holder.maxTempTV.setText("Max tmp: " + model.getTempMax());
         holder.minTempTV.setText("Min tmp: " + model.getTempMin());
         holder.uVIndexTV.setText("UV: " + model.getUvIndex());
         holder.rainTV.setText("Rain: " + model.getRainSum());
         holder.dateTV.setText(getDate(position));
-        setWeathercodeIcon(holder, holder.itemView.getContext());
+        setWeathercodeIcon(holder, holder.itemView.getContext(), details.getUrlToIcon());
+        holder.descriptionTV.setText(details.getDescription());
     }
 
-    private void setWeathercodeIcon(ViewHolder holder, Context context) {
+    private void setWeathercodeIcon(ViewHolder holder, Context context, String urlToIcon) {
         try {
             Glide.with(context) // Pass the context from the holder.itemView
-                    .load("https://openweathermap.org/img/wn/01d@2x.png")
+                    .load(urlToIcon)
                     .into(holder.weatherImageIV);
         } catch (Exception e) {
             Log.i("OLLIE", "onCreate: " + e.getMessage());
