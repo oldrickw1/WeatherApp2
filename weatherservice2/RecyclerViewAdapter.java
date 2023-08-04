@@ -1,6 +1,7 @@
 package com.example.weatherservice2;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,6 +63,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.uVIndexTV.setText("UV: " + model.getUvIndex());
         holder.rainTV.setText("Rain: " + model.getRainSum());
         holder.dateTV.setText(getDate(position));
+        setWeathercodeIcon(holder, holder.itemView.getContext());
+    }
+
+    private void setWeathercodeIcon(ViewHolder holder, Context context) {
+        try {
+            Glide.with(context) // Pass the context from the holder.itemView
+                    .load("https://openweathermap.org/img/wn/01d@2x.png")
+                    .into(holder.weatherImageIV);
+        } catch (Exception e) {
+            Log.i("OLLIE", "onCreate: " + e.getMessage());
+        }
     }
 
     private String getDate(int daysOffset) {
