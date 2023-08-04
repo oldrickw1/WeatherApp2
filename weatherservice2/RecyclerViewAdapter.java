@@ -9,7 +9,12 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
     private ArrayList<WeatherModel> weatherModels;
@@ -25,6 +30,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView uVIndexTV;
         TextView rainTV;
         ImageView weatherImageIV;
+        TextView dateTV;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -33,6 +39,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             uVIndexTV = itemView.findViewById(R.id.uVIndexTV);
             rainTV = itemView.findViewById(R.id.rainTV);
             weatherImageIV = itemView.findViewById(R.id.imageView);
+            dateTV = itemView.findViewById(R.id.dateTV);
         }
     }
 
@@ -54,6 +61,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.minTempTV.setText("Min tmp: " + model.getTempMin());
         holder.uVIndexTV.setText("UV: " + model.getUvIndex());
         holder.rainTV.setText("Rain: " + model.getRainSum());
+        holder.dateTV.setText(getDate(position));
+    }
+
+    private String getDate(int daysOffset) {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate targetDate = currentDate.plusDays(daysOffset);
+        String pattern = "EEEE, dd MMMM";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH);
+        return targetDate.format(formatter);
     }
 
     // Return the number of items in the data set
