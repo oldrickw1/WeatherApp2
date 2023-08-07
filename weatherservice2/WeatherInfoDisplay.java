@@ -18,7 +18,6 @@ import com.example.utils.Util;
 import java.util.ArrayList;
 
 public class WeatherInfoDisplay extends AppCompatActivity {
-    // todo: fix UI
     private TextView cityNameDisplayTV;
     private TextView cityWeatherDisplayTV;
     private TextView dataTV;
