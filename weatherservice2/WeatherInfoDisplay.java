@@ -2,20 +2,22 @@ package com.example.weatherservice2;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ArrayAdapter;
+import android.util.Log;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.example.utils.Util;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class WeatherInfoDisplay extends AppCompatActivity {
     private TextView cityNameDisplayTV;
@@ -27,26 +29,26 @@ public class WeatherInfoDisplay extends AppCompatActivity {
     private WeatherDataServiceAPI weatherAPI = new WeatherDataServiceAPI(this);
     private TextView countryNameTV;
 
+    TabLayout tabLayout;
+    ViewPager2 viewPager2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_info_display);
 
-
         cityNameDisplayTV = findViewById(R.id.cityNameTV);
         countryNameTV = findViewById(R.id.countryNameTV);
         cityWeatherDisplayTV = findViewById(R.id.countryNameTV);
-        dataTV = findViewById(R.id.dateTV);
-        recyclerView = findViewById(R.id.recyclerView);
-        imageView2 = findViewById(R.id.imageView);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager2 = findViewById(R.id.pager);
 
         getWeather(getCityData());
-
     }
+
+
 
     private CityData getCityData() {
         Bundle extras = getIntent().getExtras();
@@ -61,15 +63,10 @@ public class WeatherInfoDisplay extends AppCompatActivity {
         cityNameDisplayTV.setText(city.getCityName());
         countryNameTV.setText(city.getCountry());
         weatherAPI.getCityWeatherForWeek(city).thenAccept(results -> {
-            RecyclerViewAdapter adapter = new RecyclerViewAdapter(results);
-            recyclerView.setAdapter(adapter);
-            Util.log("WEATHERCODE: " + results.get(0).getWeatherCode());
-            Glide.with(this)
-                    .load("http://openweathermap.org/img/wn/01d@2x.png")
-                    .into(imageView2);
+            Log.i("DEBUG", "getWeather: result of weather api call" + results.toString());
+            WeatherFragmentStateAdapter weatherFragmentStateAdapter = new WeatherFragmentStateAdapter(this, getSupportFragmentManager(), getLifecycle(), results);
+            viewPager2.setAdapter(weatherFragmentStateAdapter);
+            new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> tab.setText(results.get(position).getDate().substring(0,2))).attach();
         });
     }
-
-
-
 }

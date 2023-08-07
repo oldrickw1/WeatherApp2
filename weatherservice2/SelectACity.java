@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import kotlin.jvm.internal.Ref;
 
 public class SelectACity extends AppCompatActivity {
-    //todo: When getting back from the display activity to SelectACity activity, old data is still there. Fix this
     AutoCompleteTextView selectCityACTV;
     TextView displayLoadingTV;
     ProgressBar circularProgressBar;
@@ -58,10 +57,13 @@ public class SelectACity extends AppCompatActivity {
             CityData cityData = (CityData) parent.getItemAtPosition(position);
             startIntentForSelectedCity(cityData);
         });
-
     }
 
-
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        selectCityACTV.setText("");
+    }
 
     private void startIntentForSelectedCity(CityData cityData) {
         Intent intent = new Intent(this, WeatherInfoDisplay.class);

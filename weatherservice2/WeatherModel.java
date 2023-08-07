@@ -7,6 +7,7 @@ public class WeatherModel {
     private float tempMin;
     private float uvIndex;
     private float rainSum;
+    private String date;
 
     public WeatherModel(CityData cityData, int weatherCode, float tempMax, float tempMin, float uvIndex, float rainSum) {
         this.cityData = cityData;
@@ -44,6 +45,13 @@ public class WeatherModel {
         return rainSum;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     @Override
     public String toString() {

@@ -11,8 +11,11 @@ import com.example.utils.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -72,6 +75,7 @@ public class WeatherDataServiceAPI {
                 response -> {
                     try {
                         ArrayList<WeatherModel> weather = extractDataFromJsonObjectToWeatherModel(cityData ,response);
+                        addDates(weather);
                         completableFuture.complete(weather);
                     } catch (Exception e) {
                         completableFuture.completeExceptionally(e);
@@ -83,6 +87,23 @@ public class WeatherDataServiceAPI {
         MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
         return completableFuture;
     }
+
+    private void addDates(List<WeatherModel> weatherModelList) {
+        for (int i = 0; i < 7; i++) {
+            weatherModelList.get(i).setDate(getDate(i));
+        }
+    }
+
+
+
+    private String getDate(int daysOffset) {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate targetDate = currentDate.plusDays(daysOffset);
+        String pattern = "EEEE, dd MMMM";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH);
+        return targetDate.format(formatter);
+    }
+
 
     private ArrayList<WeatherModel> extractDataFromJsonObjectToWeatherModel(CityData cityData, JSONObject response) {
         ArrayList<WeatherModel> weatherModels = new ArrayList<>();
