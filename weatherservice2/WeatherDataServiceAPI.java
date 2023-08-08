@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class WeatherDataServiceAPI {
-    private static final String QUERY_FOR_CITY_COORDINATES = "https://api.api-ninjas.com/v1/city?name=";
     private static final String BASE_URL = "https://api.open-meteo.com/v1/forecast";
     private final Context context;
 
@@ -29,7 +28,6 @@ public class WeatherDataServiceAPI {
         this.context = context;
     }
 
-    //https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=weathercode,temperature_2m_max,temperature_2m_min,uv_index_max,rain_sum&timezone=Europe%2FBerlin
     private static String getCityWeatherURL(double latitude, double longitude) {
         String queryParams = String.format(
                 Locale.US,
@@ -38,32 +36,6 @@ public class WeatherDataServiceAPI {
                 longitude
         );
         return BASE_URL + queryParams;
-    }
-
-    public CompletableFuture<Coordinate> getCityCoordinateAsync(String cityName) {
-        String url = QUERY_FOR_CITY_COORDINATES + cityName;
-        CompletableFuture<Coordinate> completableFuture = new CompletableFuture<>();
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.GET, url, null,
-                response -> {
-                    try {
-                        var jso = response.getJSONObject(0);
-                        completableFuture.complete(new Coordinate(jso.getDouble("longitude"), jso.getDouble("latitude")));
-                    } catch (JSONException e) {
-                        completableFuture.completeExceptionally(e);
-                    }
-                },
-                error -> completableFuture.completeExceptionally(new Exception("Something wrong"))
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("X-Api-Key", Constants.apiKey);
-                return headers;
-            }
-        };
-        MySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
-        return completableFuture;
     }
 
     public CompletableFuture<ArrayList<WeatherModel>> getCityWeatherForWeek(CityData cityData) {
@@ -94,8 +66,6 @@ public class WeatherDataServiceAPI {
         }
     }
 
-
-
     private String getDate(int daysOffset) {
         LocalDate currentDate = LocalDate.now();
         LocalDate targetDate = currentDate.plusDays(daysOffset);
@@ -103,7 +73,6 @@ public class WeatherDataServiceAPI {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH);
         return targetDate.format(formatter);
     }
-
 
     private ArrayList<WeatherModel> extractDataFromJsonObjectToWeatherModel(CityData cityData, JSONObject response) {
         ArrayList<WeatherModel> weatherModels = new ArrayList<>();
@@ -123,5 +92,4 @@ public class WeatherDataServiceAPI {
         }
         return weatherModels;
     }
-
 }

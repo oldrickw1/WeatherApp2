@@ -1,8 +1,8 @@
 package com.example.weatherservice2;
 
 public class WeatherCodeDetails {
-    private String description;
-    private String urlToIcon;
+    private final String description;
+    private final String urlToIcon;
 
     public WeatherCodeDetails(String description, String urlToIcon) {
         this.description = description;

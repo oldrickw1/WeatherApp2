@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 
 public class CitiesDAO implements IcitiesDAO {
-    private SQLiteDatabase db;
+    private final SQLiteDatabase db;
 
     public CitiesDAO(SQLiteDatabase database) {
         this.db = database;

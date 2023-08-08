@@ -1,12 +1,14 @@
 package com.example.weatherservice2;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class WeatherMapping {
     public static WeatherCodeDetails getWeatherCodeDetails(Context context, int weatherCode) {
@@ -16,6 +18,7 @@ public class WeatherMapping {
             infoForSpecificCodeDuringDay = jsonObject.getJSONObject(String.valueOf(weatherCode)).getJSONObject("day");
             String description = infoForSpecificCodeDuringDay.getString("description");
             String urlToImage = infoForSpecificCodeDuringDay.getString("image");
+            Log.i("WEATHERMAPPING", "getWeatherCodeDetails: description: " + description + ", urlToImage: " + urlToImage);
             return new WeatherCodeDetails(description,urlToImage);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -31,7 +34,7 @@ public class WeatherMapping {
             byte[] buffer = new byte[size];
             inputStream.read(buffer);
             inputStream.close();
-            return new JSONObject(new String(buffer, "UTF-8"));
+            return new JSONObject(new String(buffer, StandardCharsets.UTF_8));
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }

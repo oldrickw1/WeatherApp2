@@ -24,10 +24,6 @@ public class WeatherFragment extends Fragment {
     public static final String DESCRIPTION = "description";
     public static final String DATE = "date";
 
-    public WeatherFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -39,17 +35,17 @@ public class WeatherFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ((TextView) view.findViewById(R.id.maxTempTV)).setText("Max temp: " + getArguments().getFloat(MAX_TEMP));
         ((TextView) view.findViewById(R.id.minTempTV)).setText("Min temp: " + getArguments().getFloat(MIN_TEMP));
-
         ((TextView) view.findViewById(R.id.uVIndexTV)).setText("UV index: " + getArguments().getFloat(UV_INDEX));
         ((TextView) view.findViewById(R.id.rainTV)).setText("Rain: " + getArguments().getFloat(RAIN));
         ((TextView) view.findViewById(R.id.weatherDescriptionTV)).setText(getArguments().getString(DESCRIPTION));
         ((TextView) view.findViewById(R.id.dateTV)).setText(getArguments().getString(DATE));
         setWeathercodeIcon(view, getContext(), getArguments().getString(IMG_URL));
+
     }
 
     private void setWeathercodeIcon(View view, Context context, String urlToIcon) {
         try {
-            Glide.with(context) // Pass the context from the holder.itemView
+            Glide.with(context)
                     .load(urlToIcon)
                     .into((ImageView) view.findViewById(R.id.weatherIcon));
         } catch (Exception e) {

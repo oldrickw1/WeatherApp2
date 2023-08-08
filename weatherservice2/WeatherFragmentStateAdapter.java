@@ -15,13 +15,12 @@ import java.util.List;
 public class WeatherFragmentStateAdapter extends FragmentStateAdapter {
 
     List<WeatherModel> weatherModels;
-    private Context context;
+    private final Context context;
 
     public WeatherFragmentStateAdapter(Context context, @NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, List<WeatherModel> weatherModels) {
         super(fragmentManager, lifecycle);
         this.weatherModels = weatherModels;
         this.context = context;
-        Log.i("DEBUG", "WeatherFragmentStateAdapter: weatherModels: " + weatherModels.toString());
     }
 
     @NonNull

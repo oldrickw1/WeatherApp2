@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AutoCompleteCityAdapter extends ArrayAdapter<CityData> {
-    private List<CityData> cityListFull;
+    private final List<CityData> cityListFull;
     public AutoCompleteCityAdapter(@NonNull Context context, @NonNull List<CityData> cityDataList) {
         super(context, 0, cityDataList);
         cityListFull = new ArrayList<>(cityDataList);
@@ -49,7 +49,7 @@ public class AutoCompleteCityAdapter extends ArrayAdapter<CityData> {
         return convertView;
     }
 
-    private Filter cityFilter = new Filter() {
+    private final Filter cityFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
             FilterResults results = new FilterResults();

@@ -1,10 +1,10 @@
 package com.example.weatherservice2;
 
 public class CityData {
-    private String cityName;
-    private String country;
-    private double latitude;
-    private double longitude;
+    private final String cityName;
+    private final String country;
+    private final double latitude;
+    private final double longitude;
 
     public CityData(String cityName, String country, double latitude, double longitude) {
         this.cityName = cityName;

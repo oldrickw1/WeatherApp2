@@ -49,7 +49,6 @@ public class SelectACity extends AppCompatActivity {
         displayLoadingTV = findViewById(R.id.displayLoading);
         circularProgressBar =  findViewById(R.id.circularProgressBar);
 
-
         AutoCompleteCityAdapter adapter = new AutoCompleteCityAdapter(this, cities);
         selectCityACTV.setAdapter(adapter);
 
@@ -72,14 +71,5 @@ public class SelectACity extends AppCompatActivity {
         intent.putExtra("latitude", cityData.getLatitude());
         intent.putExtra("longitude" , cityData.getLongitude());
         startActivity(intent);
-    }
-
-    private void displayLoadingMessage(String cityName) {
-        selectCityACTV.setVisibility(View.INVISIBLE);
-        displayLoadingTV.setText("Getting the forecast for " + cityName + "!");
-        circularProgressBar.setVisibility(View.VISIBLE);
-        displayLoadingTV.setVisibility(View.VISIBLE);
-
-
     }
 }

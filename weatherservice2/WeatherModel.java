@@ -1,12 +1,12 @@
 package com.example.weatherservice2;
 
 public class WeatherModel {
-    private CityData cityData;
-    private int weatherCode;
-    private float tempMax;
-    private float tempMin;
-    private float uvIndex;
-    private float rainSum;
+    private final CityData cityData;
+    private final int weatherCode;
+    private final float tempMax;
+    private final float tempMin;
+    private final float uvIndex;
+    private final float rainSum;
     private String date;
 
     public WeatherModel(CityData cityData, int weatherCode, float tempMax, float tempMin, float uvIndex, float rainSum) {

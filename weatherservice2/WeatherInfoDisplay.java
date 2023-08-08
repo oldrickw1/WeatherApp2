@@ -21,34 +21,22 @@ import java.util.Locale;
 
 public class WeatherInfoDisplay extends AppCompatActivity {
     private TextView cityNameDisplayTV;
-    private TextView cityWeatherDisplayTV;
-    private TextView dataTV;
-    private RecyclerView recyclerView;
-    private ImageView imageView2;
+    private TextView geoLocationTV;
 
-    private WeatherDataServiceAPI weatherAPI = new WeatherDataServiceAPI(this);
+    private final WeatherDataServiceAPI weatherAPI = new WeatherDataServiceAPI(this);
     private TextView countryNameTV;
 
-    TabLayout tabLayout;
-    ViewPager2 viewPager2;
-
+    private TabLayout tabLayout;
+    private ViewPager2 viewPager2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather_info_display);
+        setContentView(R.layout.layout_loading);
 
-        cityNameDisplayTV = findViewById(R.id.cityNameTV);
-        countryNameTV = findViewById(R.id.countryNameTV);
-        cityWeatherDisplayTV = findViewById(R.id.countryNameTV);
-
-        tabLayout = findViewById(R.id.tabLayout);
-        viewPager2 = findViewById(R.id.pager);
 
         getWeather(getCityData());
     }
-
-
 
     private CityData getCityData() {
         Bundle extras = getIntent().getExtras();
@@ -60,10 +48,20 @@ public class WeatherInfoDisplay extends AppCompatActivity {
     }
 
     private void getWeather(CityData city) {
-        cityNameDisplayTV.setText(city.getCityName());
-        countryNameTV.setText(city.getCountry());
         weatherAPI.getCityWeatherForWeek(city).thenAccept(results -> {
-            Log.i("DEBUG", "getWeather: result of weather api call" + results.toString());
+            Log.i("RESULT", "getWeather: result: " + results.toString());
+            setContentView(R.layout.activity_weather_info_display);
+            countryNameTV = findViewById(R.id.countryNameTV);
+            geoLocationTV = findViewById(R.id.geoLocation);
+            cityNameDisplayTV = findViewById(R.id.cityNameTV);
+            tabLayout = findViewById(R.id.tabLayout);
+            viewPager2 = findViewById(R.id.pager);
+
+            cityNameDisplayTV.setText(city.getCityName());
+            countryNameTV.setText(city.getCountry());
+            geoLocationTV.setText("(" +   city.getLatitude() + " , " + city.getLongitude() + ")");
+
+
             WeatherFragmentStateAdapter weatherFragmentStateAdapter = new WeatherFragmentStateAdapter(this, getSupportFragmentManager(), getLifecycle(), results);
             viewPager2.setAdapter(weatherFragmentStateAdapter);
             new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> tab.setText(results.get(position).getDate().substring(0,2))).attach();
