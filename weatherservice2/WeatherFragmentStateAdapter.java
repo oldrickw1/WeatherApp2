@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,8 +40,8 @@ public class WeatherFragmentStateAdapter extends FragmentStateAdapter {
         args.putString(WeatherFragment.IMG_URL, details.getUrlToIcon());
         args.putString(WeatherFragment.DATE, weatherModels.get(position).getDate());
 
-        // test
-        args.putSerializable("key", new ArrayList<>(Arrays.asList("a", "b", "c")));
+
+        args.putSerializable(WeatherFragment.TEMPS, (Serializable) weatherModels.get(position).getDailyTemperatureDataPoints());
 
         fragment.setArguments(args);
         return fragment;

@@ -1,23 +1,21 @@
 package com.example.weatherservice2;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.utils.Constants;
 import com.example.utils.Util;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class WeatherDataServiceAPI {
@@ -31,7 +29,7 @@ public class WeatherDataServiceAPI {
     private static String getCityWeatherURL(double latitude, double longitude) {
         String queryParams = String.format(
                 Locale.US,
-                "?latitude=%.2f&longitude=%.2f&daily=weathercode,temperature_2m_max,temperature_2m_min,uv_index_max,rain_sum&timezone=Europe%%2FBerlin",
+                "?latitude=%.2f&longitude=%.2f&hourly=temperature_2m&daily=weathercode,temperature_2m_max,temperature_2m_min,uv_index_max,rain_sum&timezone=Europe%%2FBerlin",
                 latitude,
                 longitude
         );
@@ -84,7 +82,8 @@ public class WeatherDataServiceAPI {
                 float tempMin = (float) daily.getJSONArray("temperature_2m_min").getDouble(i);
                 float uv_index_max = (float) daily.getJSONArray("uv_index_max").getDouble(i);
                 float rain_sum = (float) daily.getJSONArray("rain_sum").getDouble(i);
-                weatherModels.add(new WeatherModel(cityData, weatherCode, tempMax, tempMin, uv_index_max, rain_sum));
+                List<List<WeatherModel.TempDP>> dailyTemperatureDataPoints = getTemps(response);
+                weatherModels.add(new WeatherModel(cityData, weatherCode, tempMax, tempMin, uv_index_max, rain_sum, dailyTemperatureDataPoints.get(i)));
             }
         } catch (JSONException e) {
             Util.log(e.getMessage());
@@ -92,4 +91,32 @@ public class WeatherDataServiceAPI {
         }
         return weatherModels;
     }
+
+    private List<List<WeatherModel.TempDP>> getTemps(JSONObject response) {
+        List<List<WeatherModel.TempDP>> weekTemps = new ArrayList<>();
+        List<WeatherModel.TempDP> dayTemps = new ArrayList<>();
+        WeatherModel weatherModel = null;
+
+        try {
+            JSONObject hourlyData = response.getJSONObject("hourly");
+            JSONArray times = hourlyData.getJSONArray("time");
+            JSONArray temperatures = hourlyData.getJSONArray("temperature_2m");
+            Log.i("DEBUG", "extractJson: number of timestamps: " +times.length());
+            for (int i = 0; i < times.length(); i++) {
+                if (i%24 == 0 && i !=0) {
+                    dayTemps.add(new WeatherModel.TempDP(24, temperatures.getDouble(i)));
+                    weekTemps.add(dayTemps);
+                    dayTemps = new ArrayList<>();
+                }
+                dayTemps.add(new WeatherModel.TempDP(i%24, temperatures.getDouble(i)));
+            }
+            dayTemps.add(new WeatherModel.TempDP(24, temperatures.getDouble((times.length()-1)) - 0.5f));
+            weekTemps.add(dayTemps);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return weekTemps;
+    }
+
 }
