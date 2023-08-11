@@ -15,6 +15,9 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 public class WeatherFragment extends Fragment {
     public static final String MAX_TEMP = "maxTemp";
     public static final String MIN_TEMP = "minTemp";
@@ -40,7 +43,9 @@ public class WeatherFragment extends Fragment {
         ((TextView) view.findViewById(R.id.weatherDescriptionTV)).setText(getArguments().getString(DESCRIPTION));
         ((TextView) view.findViewById(R.id.dateTV)).setText(getArguments().getString(DATE));
         setWeathercodeIcon(view, getContext(), getArguments().getString(IMG_URL));
-
+        ((ArrayList<String>)getArguments().getSerializable("key")).forEach(s -> {
+            Log.d("TEST", "onViewCreated: " + s);
+        });
     }
 
     private void setWeathercodeIcon(View view, Context context, String urlToIcon) {
