@@ -59,7 +59,6 @@ public class WeatherFragment extends Fragment {
         ((TextView) view.findViewById(R.id.dateTV)).setText(getArguments().getString(DATE));
         setWeathercodeIcon(view, getContext(), getArguments().getString(IMG_URL));
         ArrayList<WeatherModel.TempDP> temps = ((ArrayList<WeatherModel.TempDP>)getArguments().getSerializable(TEMPS));
-        Log.d("OLLIE", "temperatures in WFragment : " + temps);
         lineChart = view.findViewById(R.id.lineChart);
         fillLineChart(temps);
     }
@@ -115,6 +114,8 @@ public class WeatherFragment extends Fragment {
 
         // Y-axis formatting
         YAxis yAxis = lineChart.getAxisLeft();
+        yAxis.setAxisMinimum(getArguments().getFloat(MIN_TEMP) - 10);
+        yAxis.setAxisMaximum(getArguments().getFloat(MAX_TEMP) + 5);
         yAxis.setValueFormatter(new TemperatureAxisValueFormatter()); // Custom formatter for temperature
         yAxis.setDrawGridLines(false);
         yAxis.setTextColor(Color.WHITE);
@@ -124,5 +125,11 @@ public class WeatherFragment extends Fragment {
         lineChart.getLegend().setEnabled(false);
         lineChart.setBackgroundColor(Color.BLACK);
         lineChart.getAxisRight().setEnabled(false);
+        lineChart.setTouchEnabled(false);
+        lineChart.setDragEnabled(false);
+        lineChart.setScaleEnabled(false);
+        lineChart.setPinchZoom(false);
+        lineChart.setDoubleTapToZoomEnabled(false);
+        lineChart.getDescription().setEnabled(false);
     }
 }

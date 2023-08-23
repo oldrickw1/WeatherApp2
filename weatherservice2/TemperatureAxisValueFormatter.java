@@ -15,6 +15,6 @@ public class TemperatureAxisValueFormatter extends ValueFormatter {
         String formattedValue = decimalFormat.format(value);
         formattedValue = formattedValue.replace(",", ".");
         float roundedValue = Float.parseFloat(formattedValue);
-        return roundedValue + " °C"; // Format temperature label
+        return roundedValue + " °C";
     }
 }

@@ -1,7 +1,5 @@
 package com.example.weatherservice2;
 
-import android.util.Log;
-
 import java.util.List;
 
 public class WeatherModel {
@@ -13,9 +11,11 @@ public class WeatherModel {
     private final float rainSum;
     private String date;
     private List<TempDP> dailyTemperatureDataPoints;
+    private String description;
+    private String urlToWeatherIcon;
 
 
-    public WeatherModel(CityData cityData, int weatherCode, float tempMax, float tempMin, float uvIndex, float rainSum, List<TempDP> dailyTemperatureDataPoints) {
+    public WeatherModel(CityData cityData, int weatherCode, float tempMax, float tempMin, float uvIndex, float rainSum, List<TempDP> dailyTemperatureDataPoints, String description, String urlToWeatherIcon) {
         this.cityData = cityData;
         this.weatherCode = weatherCode;
         this.tempMax = tempMax;
@@ -23,6 +23,8 @@ public class WeatherModel {
         this.uvIndex = uvIndex;
         this.rainSum = rainSum;
         this.dailyTemperatureDataPoints = dailyTemperatureDataPoints;
+        this.description = description;
+        this.urlToWeatherIcon = urlToWeatherIcon;
     }
 
     public List<TempDP> getDailyTemperatureDataPoints() {
@@ -64,6 +66,14 @@ public class WeatherModel {
         this.date = date;
     }
 
+    public String getUrlToWeatherIcon() {
+        return urlToWeatherIcon;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     @Override
     public String toString() {
         return "WeatherModel{" +
@@ -81,7 +91,6 @@ public class WeatherModel {
         private double temperature;
 
         public TempDP(int hour, double temperature) {
-            Log.d("DEBUG", "TemperatureDataPoint: hour: " + hour + ",temperature: " + temperature);
             this.time = hour;
             this.temperature = temperature;
         }

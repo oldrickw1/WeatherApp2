@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class myDatabaseHelper extends SQLiteOpenHelper {
-    public myDatabaseHelper(@Nullable Context context) {
+public class DatabaseHelper extends SQLiteOpenHelper {
+    public DatabaseHelper(@Nullable Context context) {
         super(context, "cities.db", null, 1);
     }
 
